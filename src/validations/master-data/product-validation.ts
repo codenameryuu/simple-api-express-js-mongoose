@@ -1,9 +1,15 @@
-import Joi from "joi";
+import Joi, { ValidationErrorItem } from "joi";
 import mongoose from "mongoose";
 import isset from "../../helpers/isset";
 
 import ProductCategory from "../../models/product-category";
 import Product from "../../models/product";
+
+let error: ValidationErrorItem = {
+  message: "",
+  path: [""],
+  type: "",
+};
 
 class ProductValidation {
   // * Index validation
@@ -55,17 +61,24 @@ class ProductValidation {
     const schema = Joi.object({
       product_id: Joi.string()
         .required()
-        .custom(async (value, helper) => {
+        .external(async (value) => {
+          let statusError = false;
           const check = mongoose.isValidObjectId(value);
 
           if (!check) {
-            return helper.error(`"product_id" is not object id`);
+            statusError = true;
+            error.message = `"product_id" is not object id`;
           }
 
           const product = await Product.findOne({ _id: value });
 
           if (!product) {
-            return helper.error(`"product_id" is not exists`);
+            statusError = true;
+            error.message = `"product_id" is not exists`;
+          }
+
+          if (statusError) {
+            throw new Joi.ValidationError("Error", [error], value);
           }
 
           return true;
@@ -101,17 +114,24 @@ class ProductValidation {
     const schema = Joi.object({
       product_category_id: Joi.string()
         .required()
-        .custom(async (value, helper) => {
+        .external(async (value) => {
+          let statusError = false;
           const check = mongoose.isValidObjectId(value);
 
           if (!check) {
-            return helper.error(`"product_category_id" is not object id`);
+            statusError = true;
+            error.message = `"product_category_id" is not object id`;
           }
 
           const productCategory = await ProductCategory.findOne({ _id: value });
 
           if (!productCategory) {
-            return helper.error(`"product_category_id" is not exists`);
+            statusError = true;
+            error.message = `"product_category_id" is not exists`;
+          }
+
+          if (statusError) {
+            throw new Joi.ValidationError("Error", [error], value);
           }
 
           return true;
@@ -137,7 +157,6 @@ class ProductValidation {
     } catch (err: any) {
       status = false;
       message = err.details[0].message;
-      console.log(message);
     }
 
     const result = {
@@ -155,17 +174,24 @@ class ProductValidation {
     const schema = Joi.object({
       product_id: Joi.string()
         .required()
-        .custom(async (value, helper) => {
+        .external(async (value) => {
+          let statusError = false;
           const check = mongoose.isValidObjectId(value);
 
           if (!check) {
-            return helper.error(`"product_id" is not object id`);
+            statusError = true;
+            error.message = `"product_id" is not object id`;
           }
 
           const product = await Product.findOne({ _id: value });
 
           if (!product) {
-            return helper.error(`"product_id" is not exists`);
+            statusError = true;
+            error.message = `"product_id" is not exists`;
+          }
+
+          if (statusError) {
+            throw new Joi.ValidationError("Error", [error], value);
           }
 
           return true;
@@ -173,17 +199,24 @@ class ProductValidation {
 
       product_category_id: Joi.string()
         .required()
-        .custom(async (value, helper) => {
+        .external(async (value) => {
+          let statusError = false;
           const check = mongoose.isValidObjectId(value);
 
           if (!check) {
-            return helper.error(`"product_category_id" is not object id`);
+            statusError = true;
+            error.message = `"product_category_id" is not object id`;
           }
 
           const productCategory = await ProductCategory.findOne({ _id: value });
 
           if (!productCategory) {
-            return helper.error(`"product_category_id" is not exists`);
+            statusError = true;
+            error.message = `"product_category_id" is not exists`;
+          }
+
+          if (statusError) {
+            throw new Joi.ValidationError("Error", [error], value);
           }
 
           return true;
@@ -210,7 +243,6 @@ class ProductValidation {
     } catch (err: any) {
       status = false;
       message = err.details[0].message;
-      console.log(message);
     }
 
     const result = {
@@ -228,17 +260,24 @@ class ProductValidation {
     const schema = Joi.object({
       product_id: Joi.string()
         .required()
-        .custom(async (value, helper) => {
+        .external(async (value) => {
+          let statusError = false;
           const check = mongoose.isValidObjectId(value);
 
           if (!check) {
-            return helper.error(`"product_id" is not object id`);
+            statusError = true;
+            error.message = `"product_id" is not object id`;
           }
 
           const product = await Product.findOne({ _id: value });
 
           if (!product) {
-            return helper.error(`"product_id" is not exists`);
+            statusError = true;
+            error.message = `"product_id" is not exists`;
+          }
+
+          if (statusError) {
+            throw new Joi.ValidationError("Error", [error], value);
           }
 
           return true;

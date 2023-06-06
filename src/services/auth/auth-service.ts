@@ -39,7 +39,12 @@ class AuthService {
 
       return result;
     } catch (error) {
-      console.log(error);
+      const result = {
+        status: false,
+        message: "Fail to create data !",
+      };
+
+      return result;
     }
   };
 
@@ -79,7 +84,12 @@ class AuthService {
 
       return result;
     } catch (error) {
-      console.log(error);
+      const result = {
+        status: false,
+        message: "Fail to create data !",
+      };
+
+      return result;
     }
   };
 }

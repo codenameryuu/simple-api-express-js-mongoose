@@ -1,5 +1,12 @@
-import Joi from "joi";
+import Joi, { ValidationErrorItem } from "joi";
+
 import User from "../../models/user";
+
+let error: ValidationErrorItem = {
+  message: "",
+  path: [""],
+  type: "",
+};
 
 class AuthValidation {
   // * Login validation
@@ -10,11 +17,17 @@ class AuthValidation {
       email: Joi.string()
         .email()
         .required()
-        .custom(async (value, helper) => {
+        .external(async (value) => {
+          let statusError = false;
           const user = await User.findOne({ email: value });
 
           if (!user) {
-            return helper.error(`"email" is not exists`);
+            statusError = true;
+            error.message = `"email" is not exists`;
+          }
+
+          if (statusError) {
+            throw new Joi.ValidationError("Error", [error], value);
           }
 
           return true;
@@ -56,11 +69,17 @@ class AuthValidation {
       email: Joi.string()
         .email()
         .required()
-        .custom(async (value, helper) => {
+        .external(async (value) => {
+          let statusError = false;
           const user = await User.findOne({ email: value });
 
           if (user) {
-            return helper.error(`"email" is already exists`);
+            statusError = true;
+            error.message = `"email" is already exists`;
+          }
+
+          if (statusError) {
+            throw new Joi.ValidationError("Error", [error], value);
           }
 
           return true;
