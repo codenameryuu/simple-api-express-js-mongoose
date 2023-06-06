@@ -2,7 +2,7 @@ import { Schema, Document, Model, PaginateModel, model } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 import path from "path";
 import fs from "fs";
-import toJSON from "../libraries/to-json";
+import toJSON from "../helpers/to-json";
 
 interface iProduct extends Document {
   product_category_id: string;

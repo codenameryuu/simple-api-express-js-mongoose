@@ -1,4 +1,4 @@
-import isset from "../../libraries/isset";
+import isset from "../../helpers/isset";
 
 import ProductCategory from "../../models/product-category";
 
@@ -109,7 +109,7 @@ class ProductCategoryService {
   // * Destroy service
   destroy = async (req: any) => {
     try {
-      await ProductCategory.deleteOne({
+      await ProductCategory.softDelete({
         _id: req.params.product_category_id,
       });
 

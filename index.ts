@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 
 import config from "./src/config/config";
 import routes from "./src/config/routes";
-import loging from "./src/libraries/logging";
+import loging from "./src/helpers/logging";
 
 dotenv.config();
 

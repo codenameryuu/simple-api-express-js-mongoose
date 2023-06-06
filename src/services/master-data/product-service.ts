@@ -1,4 +1,4 @@
-import isset from "../../libraries/isset";
+import isset from "../../helpers/isset";
 
 import Product from "../../models/product";
 

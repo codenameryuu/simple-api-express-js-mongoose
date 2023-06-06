@@ -1,6 +1,6 @@
 import Joi from "joi";
 import mongoose from "mongoose";
-import isset from "../../libraries/isset";
+import isset from "../../helpers/isset";
 
 import ProductCategory from "../../models/product-category";
 

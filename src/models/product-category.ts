@@ -1,6 +1,8 @@
 import { Schema, Document, Model, PaginateModel, model } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
-import toJSON from "../libraries/to-json";
+import softDeletePlugin from "../libraries/soft-delete/soft-delete-plugin";
+import SoftDeleteModel from "../libraries/soft-delete/soft-delete-model";
+import toJSON from "../helpers/to-json";
 
 interface iProductCategory extends Document {
   name: string;
@@ -34,19 +36,17 @@ ProductCategorySchema.virtual("product", {
 
 ProductCategorySchema.pre("find", function () {
   const { withDeleted } = this.getOptions();
-  // const { withDeleted } = this.["options"];
 
   if (withDeleted) {
-    delete this.getFilter().deleted;
+    delete this.getFilter().isDeleted;
   }
 });
 
 ProductCategorySchema.pre("findOne", function () {
   const { withDeleted } = this.getOptions();
-  // const { withDeleted } = this.["options"];
 
   if (withDeleted) {
-    delete this.getFilter().deleted;
+    delete this.getFilter().isDeleted;
   }
 });
 
@@ -61,6 +61,7 @@ ProductCategorySchema.post("save", function (data, next) {
 });
 
 ProductCategorySchema.plugin(mongoosePaginate);
+ProductCategorySchema.plugin(softDeletePlugin);
 ProductCategorySchema.plugin(toJSON);
 
 type ProductCategoryModel = Model<
@@ -71,7 +72,9 @@ type ProductCategoryModel = Model<
 
 const ProductCategory = model<
   iProductCategoryDocument,
-  PaginateModel<iProductCategoryDocument> & ProductCategoryModel
+  PaginateModel<iProductCategoryDocument> &
+    SoftDeleteModel<iProductCategory> &
+    ProductCategoryModel
 >("ProductCategory", ProductCategorySchema, "product_categories");
 
 export default ProductCategory;

@@ -11,11 +11,9 @@ const toJSON = (schema: any) => {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
     transform(doc: Document, ret: any, options: Record<string, any>) {
-      ret.id = ret._id.toString();
-
-      delete ret._id;
-
-      delete ret.__v;
+      delete ret.id;
+      delete ret.is_deleted;
+      delete ret.deleted_at;
 
       if (transform) {
         return transform(doc, ret, options);

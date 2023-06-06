@@ -2,7 +2,9 @@ import { Schema, Document, Model, PaginateModel, model } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 import path from "path";
 import fs from "fs";
-import toJSON from "../libraries/to-json";
+import softDeletePlugin from "../libraries/soft-delete/soft-delete-plugin";
+import SoftDeleteModel from "../libraries/soft-delete/soft-delete-model";
+import toJSON from "../helpers/to-json";
 
 interface iUser extends Document {
   name: string;
@@ -52,6 +54,22 @@ UserSchema.virtual("image_url").get(function () {
   );
 });
 
+UserSchema.pre("find", function () {
+  const { withDeleted } = this.getOptions();
+
+  if (withDeleted) {
+    delete this.getFilter().isDeleted;
+  }
+});
+
+UserSchema.pre("findOne", function () {
+  const { withDeleted } = this.getOptions();
+
+  if (withDeleted) {
+    delete this.getFilter().isDeleted;
+  }
+});
+
 UserSchema.post("save", function (data, next) {
   if (!data.created_at) {
     data.created_at = Date.now();
@@ -61,12 +79,6 @@ UserSchema.post("save", function (data, next) {
   data.save();
   next();
 });
-
-UserSchema.methods.toJSON = function () {
-  let data = this.toObject();
-  delete data.password;
-  return data;
-};
 
 UserSchema.method("toJSON", function toJSON() {
   let data: any = this.toObject();
@@ -110,14 +122,14 @@ UserSchema.method("deleteImage", function deleteImage() {
 });
 
 UserSchema.plugin(mongoosePaginate);
+UserSchema.plugin(softDeletePlugin);
 UserSchema.plugin(toJSON);
 
 type UserModel = Model<iUser, {}, iUserDocument>;
 
-const user = model<iUserDocument, PaginateModel<iUserDocument> & UserModel>(
-  "User",
-  UserSchema,
-  "users"
-);
+const user = model<
+  iUserDocument,
+  PaginateModel<iUserDocument> & SoftDeleteModel<iUser> & UserModel
+>("User", UserSchema, "users");
 
 export default user;
