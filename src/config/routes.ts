@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 import RouteGroup from "express-route-grouping";
-// const auth = require("../apps/Middleware/Auth");
+import auth from "../middleware/auth";
 
 const router = new RouteGroup("/", Router());
 
@@ -21,23 +21,24 @@ import ProductCategoryController from "../controllers/master-data/product-catego
 const productCategoryController = new ProductCategoryController();
 
 router.group("/product-category", (router) => {
-  // * User JWT Auth
-  // router.use(auth);
-
   // * Index
-  router.get("", productCategoryController.index);
+  router.get("", auth, productCategoryController.index);
 
   // * Show
-  router.get("/:product_category_id", productCategoryController.show);
+  router.get("/:product_category_id", auth, productCategoryController.show);
 
   // * Store
-  router.post("", productCategoryController.store);
+  router.post("", auth, productCategoryController.store);
 
   // * Update
-  router.put("/:product_category_id", productCategoryController.update);
+  router.put("/:product_category_id", auth, productCategoryController.update);
 
   // * Delete
-  router.delete("/:product_category_id", productCategoryController.destroy);
+  router.delete(
+    "/:product_category_id",
+    auth,
+    productCategoryController.destroy
+  );
 });
 
 // * Master Data -> Product
@@ -45,23 +46,20 @@ import ProductController from "../controllers/master-data/product-controller";
 const productController = new ProductController();
 
 router.group("/product", (router) => {
-  // * User JWT Auth
-  // router.use(auth);
-
   // * Index
-  router.get("", productController.index);
+  router.get("", auth, productController.index);
 
   // * Show
-  router.get("/:product_id", productController.show);
+  router.get("/:product_id", auth, productController.show);
 
   // * Store
-  router.post("", productController.store);
+  router.post("", auth, productController.store);
 
   // * Update
-  router.put("/:product_id", productController.update);
+  router.put("/:product_id", auth, productController.update);
 
   // * Delete
-  router.delete("/:product_id", productController.destroy);
+  router.delete("/:product_id", auth, productController.destroy);
 });
 
 export default router;

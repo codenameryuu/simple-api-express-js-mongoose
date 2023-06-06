@@ -109,7 +109,7 @@ class ProductCategoryService {
   // * Destroy service
   destroy = async (req: any) => {
     try {
-      await ProductCategory.deleteMany({
+      await ProductCategory.deleteOne({
         _id: req.params.product_category_id,
       });
 

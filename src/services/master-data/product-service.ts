@@ -133,7 +133,7 @@ class ProductService {
 
       await product!.deleteImage();
 
-      await Product.deleteMany({
+      await Product.deleteOne({
         _id: req.params.product_id,
       });
 
