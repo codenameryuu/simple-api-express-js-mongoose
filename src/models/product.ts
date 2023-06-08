@@ -1,11 +1,18 @@
-import { Schema, Document, Model, PaginateModel, model } from "mongoose";
+import mongoose, {
+  Schema,
+  Document,
+  Model,
+  PaginateModel,
+  model,
+  Types,
+} from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 import path from "path";
 import fs from "fs";
 import toJSON from "../helpers/to-json";
 
 interface iProduct extends Document {
-  product_category_id: string;
+  product_category_id: Types.ObjectId;
   name: string;
   price: number;
   image: string;
@@ -20,8 +27,9 @@ interface iProductDocument extends iProduct, Document {
 
 const ProductSchema: Schema<iProductDocument> = new Schema({
   product_category_id: {
-    type: String,
+    type: Schema.Types.ObjectId,
     required: true,
+    ref: "ProductCategory",
   },
   name: {
     type: String,
@@ -59,17 +67,23 @@ ProductSchema.virtual("product_category", {
 });
 
 ProductSchema.pre("find", function () {
-  this.populate({
-    path: "product_category",
-    options: { withDeleted: true },
-  });
+  // this.populate({
+  //   path: "product_category",
+  //   options: { withDeleted: true },
+  // });
 });
 
 ProductSchema.pre("findOne", function () {
-  this.populate({
-    path: "product_category",
-    options: { withDeleted: true },
-  });
+  this.populate([
+    {
+      path: "product_category",
+      options: {
+        options: {
+          withDeleted: true,
+        },
+      },
+    },
+  ]);
 });
 
 ProductSchema.post("save", function (data, next) {
@@ -148,6 +162,21 @@ ProductSchema.methods.deleteImage = function () {
 
 ProductSchema.plugin(mongoosePaginate);
 ProductSchema.plugin(toJSON);
+
+// mongoose.plugin((schema) => {
+//   const setting = {
+//     versionKey: false,
+//     virtuals: true,
+//     toJSON: { virtuals: true },
+//     toObject: { virtuals: true },
+//     transform(doc: any, ret: any) {
+//       delete ret.id;
+//     },
+//   };
+
+//   schema.options!.toJSON = setting;
+//   schema.options!.toObject = setting;
+// });
 
 type ProductModel = Model<iProduct, {}, iProductDocument>;
 

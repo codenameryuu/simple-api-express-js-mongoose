@@ -35,7 +35,8 @@ ProductCategorySchema.virtual("product", {
 });
 
 ProductCategorySchema.pre("find", function () {
-  const { withDeleted } = this.getOptions();
+  const options = this.getOptions();
+  const withDeleted = options.options.withDeleted;
 
   if (withDeleted) {
     delete this.getFilter().isDeleted;
@@ -43,7 +44,8 @@ ProductCategorySchema.pre("find", function () {
 });
 
 ProductCategorySchema.pre("findOne", function () {
-  const { withDeleted } = this.getOptions();
+  const options = this.getOptions();
+  const withDeleted = options.options.withDeleted;
 
   if (withDeleted) {
     delete this.getFilter().isDeleted;
