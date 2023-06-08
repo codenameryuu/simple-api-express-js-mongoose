@@ -1,11 +1,4 @@
-import mongoose, {
-  Schema,
-  Document,
-  Model,
-  PaginateModel,
-  model,
-  Types,
-} from "mongoose";
+import { Schema, Document, Model, PaginateModel, model, Types } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 import path from "path";
 import fs from "fs";
@@ -67,10 +60,16 @@ ProductSchema.virtual("product_category", {
 });
 
 ProductSchema.pre("find", function () {
-  // this.populate({
-  //   path: "product_category",
-  //   options: { withDeleted: true },
-  // });
+  this.populate([
+    {
+      path: "product_category",
+      options: {
+        options: {
+          withDeleted: true,
+        },
+      },
+    },
+  ]);
 });
 
 ProductSchema.pre("findOne", function () {
@@ -162,21 +161,6 @@ ProductSchema.methods.deleteImage = function () {
 
 ProductSchema.plugin(mongoosePaginate);
 ProductSchema.plugin(toJSON);
-
-// mongoose.plugin((schema) => {
-//   const setting = {
-//     versionKey: false,
-//     virtuals: true,
-//     toJSON: { virtuals: true },
-//     toObject: { virtuals: true },
-//     transform(doc: any, ret: any) {
-//       delete ret.id;
-//     },
-//   };
-
-//   schema.options!.toJSON = setting;
-//   schema.options!.toObject = setting;
-// });
 
 type ProductModel = Model<iProduct, {}, iProductDocument>;
 
