@@ -1,4 +1,4 @@
-# FDB Backend
+# Simple API Mongoose
 
 ## Features
 
@@ -12,19 +12,19 @@
 
 ## Running the application
 
-Clone the repo:
+Clone the repo
 
 ```bash
 git clone https://github.com/codenameryuu/simple-api-mongoose.git
 ```
 
-Install the dependencies:
+Install the dependencies
 
 ```bash
 yarn install or yarn
 ```
 
-Set the environment variables:
+Set the environment variables
 
 ```bash
 cp .env.example .env
@@ -41,13 +41,13 @@ SERVER_PORT=8000 # Your Application will Running on PORT
 
 ## Commands
 
-Running directly on your local:
+Running directly on your local
 
 ```bash
 yarn dev
 ```
 
-Running for production:
+Running for production
 
 ```bash
 yarn build && yarn start
