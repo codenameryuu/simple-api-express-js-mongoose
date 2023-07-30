@@ -35,7 +35,7 @@ cp .env.example .env
 ## Env Example
 
 ```bash
-MONGODB_URL=mongodb://localhost:27017/simple_api_mongoose #Your MONGODB URL
+MONGODB_URL="mongodb://fikrisabriansyah:fikrisabriansyah@localhost:27017/simple_api_mongoose?authSource=admin" #Your MONGODB URL
 SERVER_PORT=8000 # Your Application will Running on PORT
 ```
 
