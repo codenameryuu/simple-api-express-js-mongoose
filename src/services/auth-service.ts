@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
-import User from "../../models/user";
+import User from "../models/user";
 
 const jwtSecretKey = process.env.JWT_SECRET_KEY ?? "";
 
@@ -13,35 +13,27 @@ class AuthService {
         email: req.fields.email,
       });
 
-      await bcrypt
-        .compare(req.fields.password, user!.password)
-        .then(function (status) {
-          const result = {
-            status: false,
-            message: "Incorrect password !",
-          };
-
-          return result;
-        });
-
       const token = jwt.sign(
-        { userId: user!.id, email: user!.email },
+        {
+          userId: user!.id,
+          email: user!.email,
+        },
         jwtSecretKey!,
         {}
       );
 
       const result = {
         status: true,
-        message: "Data created successfully !",
+        message: "Data berhasil diambil !",
         data: user,
         token: token,
       };
 
       return result;
-    } catch (error) {
+    } catch (err: any) {
       const result = {
         status: false,
-        message: "Fail to create data !",
+        message: "Data gagal diambil !",
       };
 
       return result;
@@ -65,28 +57,31 @@ class AuthService {
 
       await user.save();
 
-      const userResult = await User.findOne({
+      const data = await User.findOne({
         _id: user.id,
       });
 
       const token = jwt.sign(
-        { userId: user.id, email: user.email },
+        {
+          userId: user.id,
+          email: user.email,
+        },
         jwtSecretKey,
         {}
       );
 
       const result = {
         status: true,
-        message: "Data created successfully !",
-        data: userResult,
+        message: "Data berhasil disimpan !",
+        data: data,
         token: token,
       };
 
       return result;
-    } catch (error) {
+    } catch (err: any) {
       const result = {
         status: false,
-        message: "Fail to create data !",
+        message: "Data gagal disimpan !",
       };
 
       return result;

@@ -1,108 +1,128 @@
 import { Schema, Document, Model, PaginateModel, model } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
+import moment from "moment";
+import { v4 as uuidv4 } from "uuid";
 import path from "path";
 import fs from "fs";
+
+import isset from "../helpers/isset";
+import toJSON from "../helpers/to-json";
+
 import softDeletePlugin from "../libraries/soft-delete/soft-delete-plugin";
 import SoftDeleteModel from "../libraries/soft-delete/soft-delete-model";
-import toJSON from "../helpers/to-json";
 
 interface iUser extends Document {
   name: string;
   email: string;
   password: string;
   image: string;
+
   created_at: any;
   updated_at: any;
 }
 
 interface iUserDocument extends iUser, Document {
-  toJSON: () => any;
   saveImage: (req: any) => any;
   deleteImage: () => any;
 }
 
 const UserSchema: Schema<iUserDocument> = new Schema({
+  _id: {
+    type: String,
+    required: true,
+    default: () => uuidv4(),
+  },
+
   name: {
     type: String,
     required: true,
   },
+
   email: {
     type: String,
     required: true,
     unique: true,
   },
+
   password: {
     type: String,
     required: true,
     select: true,
   },
+
   image: {
     type: String,
     required: false,
   },
+
   created_at: {
     type: Date,
+    required: false,
   },
+
   updated_at: {
     type: Date,
+    required: false,
   },
 });
 
 UserSchema.virtual("image_url").get(function () {
-  return (
-    process.env.APP_BASE_URL + "/public/storage/images/users/" + this.image
-  );
+  return process.env.APP_BASE_URL + "/public/storage/images/users/" + this.image;
 });
 
 UserSchema.pre("find", function () {
-  const { withDeleted } = this.getOptions();
+  const options = this.getOptions();
 
-  if (withDeleted) {
-    delete this.getFilter().isDeleted;
+  if (isset(options.options)) {
+    if (isset(options.options.withDeleted)) {
+      const withDeleted = options.options.withDeleted;
+
+      if (withDeleted) {
+        delete this.getFilter().isDeleted;
+      }
+    }
   }
 });
 
 UserSchema.pre("findOne", function () {
-  const { withDeleted } = this.getOptions();
+  const options = this.getOptions();
 
-  if (withDeleted) {
-    delete this.getFilter().isDeleted;
+  if (isset(options.options)) {
+    if (isset(options.options.withDeleted)) {
+      const withDeleted = options.options.withDeleted;
+
+      if (withDeleted) {
+        delete this.getFilter().isDeleted;
+      }
+    }
   }
 });
 
-UserSchema.post("save", function (data, next) {
-  if (!data.created_at) {
-    data.created_at = Date.now();
+UserSchema.pre("save", function (next) {
+  const now = moment().format("YYYY-MM-DD HH:mm:ss");
+
+  if (!this.created_at) {
+    this.created_at = new Date(now);
+  } else {
+    this.updated_at = new Date(now);
   }
 
-  data.updated_at = Date.now();
-  data.save();
   next();
 });
 
-UserSchema.method("toJSON", function toJSON() {
-  let data: any = this.toObject();
-  delete data.password;
-  return data;
-});
-
 UserSchema.method("saveImage", function saveImage(req: any) {
-  if (req.files && Object.keys(req.files).length !== 0) {
+  if (isset(req.files.image)) {
     const file = req.files.image;
     const rootPath = path.dirname(require!.main!.filename);
 
-    const extName = path.extname(file.name);
-    const fileName =
-      Date.now() + Math.random().toString(10).slice(2, 7) + extName;
-    const filePath = rootPath + "/public/storage/images/user/";
+    const filePath = rootPath + "/public/storage/users/";
+    const fileName = file.newFilename;
 
     if (!fs.existsSync(filePath)) {
       fs.mkdirSync(filePath, { recursive: true });
     }
 
-    fs.copyFile(file.path, filePath + fileName, function (err) {
-      return null;
-    });
+    fs.copyFile(file.filepath, filePath + fileName, function (err) {});
 
     return fileName;
   }
@@ -111,12 +131,14 @@ UserSchema.method("saveImage", function saveImage(req: any) {
 });
 
 UserSchema.method("deleteImage", function deleteImage() {
-  const rootPath = path.dirname(require!.main!.filename);
-  const filePath = rootPath + "/public/storage/images/user/" + this.image;
+  if (this.image) {
+    const rootPath = path.dirname(require!.main!.filename);
+    const filePath = rootPath + "/public/storage/users/" + this.image;
 
-  fs.unlink(filePath, (err) => {
-    console.log(err);
-  });
+    if (fs.existsSync(filePath)) {
+      fs.unlink(filePath, (err) => {});
+    }
+  }
 
   return null;
 });
@@ -127,9 +149,6 @@ UserSchema.plugin(toJSON);
 
 type UserModel = Model<iUser, {}, iUserDocument>;
 
-const user = model<
-  iUserDocument,
-  PaginateModel<iUserDocument> & SoftDeleteModel<iUser> & UserModel
->("User", UserSchema, "users");
+const user = model<iUserDocument, PaginateModel<iUserDocument> & SoftDeleteModel<iUser> & UserModel>("User", UserSchema, "users");
 
 export default user;

@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 
-import AuthValidation from "../../validations/auth/auth-validation";
+import AuthValidation from "../validations/auth-validation";
 const authValidation = new AuthValidation();
 
-import AuthService from "../../services/auth/auth-service";
+import AuthService from "../services/auth-service";
 const authService = new AuthService();
 
-import FormatResponse from "../../traits/format-response";
+import FormatResponse from "../traits/format-response";
 const formatResponse = new FormatResponse();
 
 class AuthController {

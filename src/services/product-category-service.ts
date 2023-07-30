@@ -1,10 +1,10 @@
-import isset from "../../helpers/isset";
+import isset from "../helpers/isset";
 
-import ProductCategory from "../../models/product-category";
+import ProductCategory from "../models/product-category";
 
 class ProductCategoryService {
-  // * Index service
-  index = async (req: any) => {
+  // * Get data service
+  getData = async (req: any) => {
     try {
       let setting = {
         page: 1,
@@ -14,66 +14,63 @@ class ProductCategoryService {
 
       let conditional: any = {};
 
-      if (isset(() => req.query.page) && req.query.page) {
+      if (isset(req.query.page)) {
         setting.page = parseInt(req.query.page);
       }
 
-      if (isset(() => req.query.limit) && req.query.limit) {
+      if (isset(req.query.limit)) {
         setting.limit = parseInt(req.query.limit);
       }
 
-      if (isset(() => req.query.search) && req.query.search) {
+      if (isset(req.query.search)) {
         conditional.name = req.query.search;
       }
 
-      const productCategory = await ProductCategory.paginate(
-        conditional,
-        setting
-      );
+      const data = await ProductCategory.paginate(conditional, setting);
 
       const result = {
         status: true,
-        message: "Data retrivied successfully !",
-        data: productCategory,
+        message: "Data behasil diambil !",
+        data: data,
       };
 
       return result;
-    } catch (error) {
+    } catch (err: any) {
       const result = {
         status: false,
-        message: "Fail to create data !",
+        message: "Data gagal diambil !",
       };
 
       return result;
     }
   };
 
-  // * Show service
-  show = async (req: any) => {
+  // * Detail data service
+  detailData = async (req: any) => {
     try {
-      const productCategory = await ProductCategory.findOne({
+      const data = await ProductCategory.findOne({
         _id: req.params.product_category_id,
       });
 
       const result = {
         status: true,
-        message: "Data retrivied successfully !",
-        data: productCategory,
+        message: "Data berhasil diambil !",
+        data: data,
       };
 
       return result;
-    } catch (error) {
+    } catch (err: any) {
       const result = {
         status: false,
-        message: "Fail to create data !",
+        message: "Data gagal diambil !",
       };
 
       return result;
     }
   };
 
-  // * Store service
-  store = async (req: any) => {
+  // * Create data service
+  createData = async (req: any) => {
     try {
       const productCategory = new ProductCategory();
 
@@ -81,25 +78,29 @@ class ProductCategoryService {
 
       await productCategory.save();
 
+      const data = ProductCategory.findOne({
+        _id: productCategory._id,
+      });
+
       const result = {
         status: true,
-        message: "Data created successfully !",
-        data: productCategory,
+        message: "Data berhasil disimpan !",
+        data: data,
       };
 
       return result;
-    } catch (error) {
+    } catch (err: any) {
       const result = {
         status: false,
-        message: "Fail to create data !",
+        message: "Data gagal disimpan !",
       };
 
       return result;
     }
   };
 
-  // * Update service
-  update = async (req: any) => {
+  // * Update data service
+  updateData = async (req: any) => {
     try {
       const productCategory = await ProductCategory.findOne({
         _id: req.params.product_category_id,
@@ -109,25 +110,29 @@ class ProductCategoryService {
 
       await productCategory!.save();
 
+      const data = ProductCategory.findOne({
+        _id: productCategory!._id,
+      });
+
       const result = {
         status: true,
-        message: "Data updated successfully !",
-        data: productCategory,
+        message: "Data berhasil disimpann !",
+        data: data,
       };
 
       return result;
-    } catch (error) {
+    } catch (err: any) {
       const result = {
         status: false,
-        message: "Fail to create data !",
+        message: "Data gagal disimpan !",
       };
 
       return result;
     }
   };
 
-  // * Destroy service
-  destroy = async (req: any) => {
+  // * Delete data service
+  deleteData = async (req: any) => {
     try {
       await ProductCategory.softDelete({
         _id: req.params.product_category_id,
@@ -135,14 +140,14 @@ class ProductCategoryService {
 
       const result = {
         status: true,
-        message: "Data deleted successfully !",
+        message: "Data berhasil dihapus !",
       };
 
       return result;
-    } catch (error) {
+    } catch (err: any) {
       const result = {
         status: false,
-        message: "Fail to create data !",
+        message: "Data gagal dihapus !",
       };
 
       return result;

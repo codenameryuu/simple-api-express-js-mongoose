@@ -2,18 +2,16 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const PORT = process.env.PORT ? Number(process.env.PORT) : 8000;
+const SERVER_PORT = process.env.SERVER_PORT ? Number(process.env.SERVER_PORT) : 3000;
 
-const config = {
+export const config = {
   mongo: {
     url: process.env.MONGODB_URL ?? "",
   },
   server: {
-    port: PORT,
+    port: SERVER_PORT,
   },
   authentication: {
     key: process.env.TOKEN_KEY ?? "",
   },
 };
-
-export default config;

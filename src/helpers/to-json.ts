@@ -12,6 +12,7 @@ const toJSON = (schema: any) => {
     toObject: { virtuals: true },
     transform(doc: Document, ret: any, options: Record<string, any>) {
       delete ret.id;
+      delete ret.password;
       delete ret.is_deleted;
       delete ret.deleted_at;
 

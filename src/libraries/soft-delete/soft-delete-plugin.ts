@@ -13,65 +13,53 @@ const softDeletePlugin = (schema: mongoose.Schema) => {
     },
   });
 
-  schema.pre(
-    "find",
-    async function (this, next: (err?: CallbackError) => void) {
-      const withDeleted = this.getOptions().withDeleted;
+  schema.pre("find", async function (this, next: (err?: CallbackError) => void) {
+    const withDeleted = this.getOptions().withDeleted;
 
-      if (withDeleted) {
-        this.setQuery({ ...this.getFilter(), is_deleted: { $ne: false } });
-        return next();
-      }
-
-      this.setQuery({ ...this.getFilter(), is_deleted: { $ne: true } });
-      next();
+    if (withDeleted) {
+      this.setQuery({ ...this.getFilter(), is_deleted: { $ne: false } });
+      return next();
     }
-  );
 
-  schema.pre(
-    "findOne",
-    async function (this, next: (err?: CallbackError) => void) {
-      const withDeleted = this.getOptions().withDeleted;
+    this.setQuery({ ...this.getFilter(), is_deleted: { $ne: true } });
+    next();
+  });
 
-      if (withDeleted) {
-        this.setQuery({ ...this.getFilter(), is_deleted: { $ne: false } });
-        return next();
-      }
+  schema.pre("findOne", async function (this, next: (err?: CallbackError) => void) {
+    const withDeleted = this.getOptions().withDeleted;
 
-      this.setQuery({ ...this.getFilter(), is_deleted: { $ne: true } });
-      next();
+    if (withDeleted) {
+      this.setQuery({ ...this.getFilter(), is_deleted: { $ne: false } });
+      return next();
     }
-  );
 
-  schema.pre(
-    "count",
-    async function (this, next: (err?: CallbackError) => void) {
-      const withDeleted = this.getOptions().withDeleted;
+    this.setQuery({ ...this.getFilter(), is_deleted: { $ne: true } });
+    next();
+  });
 
-      if (withDeleted) {
-        this.setQuery({ ...this.getFilter(), is_deleted: { $ne: false } });
-        return next();
-      }
+  schema.pre("count", async function (this, next: (err?: CallbackError) => void) {
+    const withDeleted = this.getOptions().withDeleted;
 
-      this.setQuery({ ...this.getFilter(), is_deleted: { $ne: true } });
-      next();
+    if (withDeleted) {
+      this.setQuery({ ...this.getFilter(), is_deleted: { $ne: false } });
+      return next();
     }
-  );
 
-  schema.pre(
-    "countDocuments",
-    async function (this, next: (err?: CallbackError) => void) {
-      const withDeleted = this.getOptions().withDeleted;
+    this.setQuery({ ...this.getFilter(), is_deleted: { $ne: true } });
+    next();
+  });
 
-      if (!withDeleted) {
-        this.setQuery({ ...this.getFilter(), is_deleted: { $ne: false } });
-        return next();
-      }
+  schema.pre("countDocuments", async function (this, next: (err?: CallbackError) => void) {
+    const withDeleted = this.getOptions().withDeleted;
 
-      this.setQuery({ ...this.getFilter(), is_deleted: { $ne: true } });
-      next();
+    if (!withDeleted) {
+      this.setQuery({ ...this.getFilter(), is_deleted: { $ne: false } });
+      return next();
     }
-  );
+
+    this.setQuery({ ...this.getFilter(), is_deleted: { $ne: true } });
+    next();
+  });
 
   schema.static("findWithDeleted", async function (query) {
     const updatedQuery = {

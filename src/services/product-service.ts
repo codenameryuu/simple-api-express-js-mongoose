@@ -1,76 +1,76 @@
-import isset from "../../helpers/isset";
+import isset from "../helpers/isset";
 
-import Product from "../../models/product";
+import Product from "../models/product";
 
 class ProductService {
-  // * Index service
-  index = async (req: any) => {
+  // * Get data service
+  getData = async (req: any) => {
     try {
       let setting = {
         page: 1,
-        limit: 1,
+        limit: 10,
         sort: { name: "asc" },
       };
 
       let conditional: any = {};
 
-      if (isset(() => req.query.page) && req.query.page) {
+      if (isset(req.query.page)) {
         setting.page = parseInt(req.query.page);
       }
 
-      if (isset(() => req.query.limit) && req.query.limit) {
+      if (isset(req.query.limit)) {
         setting.limit = parseInt(req.query.limit);
       }
 
-      if (isset(() => req.query.search) && req.query.search) {
+      if (isset(req.query.search)) {
         conditional.name = req.query.search;
       }
 
-      const product = await Product.paginate(conditional, setting);
+      const data = await Product.paginate(conditional, setting);
 
       const result = {
         status: true,
-        message: "Data retrivied successfully !",
-        data: product,
+        message: "Data berhasil diambil !",
+        data: data,
       };
 
       return result;
-    } catch (error) {
+    } catch (err: any) {
       const result = {
         status: false,
-        message: "Fail to create data !",
+        message: "Data gagal diambil !",
       };
 
       return result;
     }
   };
 
-  // * Show service
-  show = async (req: any) => {
+  // * Detail data service
+  detailData = async (req: any) => {
     try {
-      const product = await Product.findOne({
+      const data = await Product.findOne({
         _id: req.params.product_id,
       });
 
       const result = {
         status: true,
-        message: "Data retrivied successfully !",
-        data: product,
+        message: "Data berhasil diambil !",
+        data: data,
       };
 
       return result;
-    } catch (error) {
+    } catch (err: any) {
       const result = {
         status: false,
-        message: "Fail to create data !",
+        message: "Data gagal diambil !",
       };
 
       return result;
     }
   };
 
-  // * Store service
-  store = async (req: any) => {
+  // * Create data service
+  createData = async (req: any) => {
     try {
       const product = new Product();
 
@@ -86,29 +86,29 @@ class ProductService {
 
       await product.save();
 
-      const productResult = await Product.findOne({
+      const data = await Product.findOne({
         _id: product.id,
       });
 
       const result = {
         status: true,
-        message: "Data created successfully !",
-        data: productResult,
+        message: "Data berhasil disimpan !",
+        data: data,
       };
 
       return result;
-    } catch (error) {
+    } catch (err: any) {
       const result = {
         status: false,
-        message: "Fail to create data !",
+        message: "Data gagal disimpan !",
       };
 
       return result;
     }
   };
 
-  // * Update service
-  update = async (req: any) => {
+  // * Update data service
+  updateData = async (req: any) => {
     try {
       const product = await Product.findOne({
         _id: req.params.product_id,
@@ -127,25 +127,29 @@ class ProductService {
 
       await product!.save();
 
+      const data = await Product.findOne({
+        _id: product!._id,
+      });
+
       const result = {
         status: true,
-        message: "Data updated successfully !",
-        data: product,
+        message: "Data berhasil disimpan !",
+        data: data,
       };
 
       return result;
-    } catch (error) {
+    } catch (err: any) {
       const result = {
         status: false,
-        message: "Fail to create data !",
+        message: "Data gagal disimpan !",
       };
 
       return result;
     }
   };
 
-  // * Destroy service
-  destroy = async (req: any) => {
+  // * Detele data service
+  deleteData = async (req: any) => {
     try {
       const product = await Product.findOne({
         _id: req.params.product_id,
@@ -153,20 +157,20 @@ class ProductService {
 
       await product!.deleteImage();
 
-      await Product.deleteOne({
+      await Product.deleteMany({
         _id: req.params.product_id,
       });
 
       const result = {
         status: true,
-        message: "Data deleted successfully !",
+        message: "Data berhasil dihapus !",
       };
 
       return result;
-    } catch (error) {
+    } catch (err: any) {
       const result = {
         status: false,
-        message: "Fail to create data !",
+        message: "Data gagal dihapus !",
       };
 
       return result;
