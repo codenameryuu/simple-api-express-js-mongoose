@@ -1,4 +1,4 @@
-Simple Express JS Feet Mongoose
+Simple Express JS Ft. Mongoose
 ===
 API CRUD dengan metode `best practice` untuk express js dengan ORM mongoose
 
